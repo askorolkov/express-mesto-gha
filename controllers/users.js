@@ -12,7 +12,12 @@ const getUsers = (req, res)=>{
 
 const getUserById = (req, res)=> {
   User.findById(req.params.userId)
-  .then((user) =>res.send(user))
+  .then((user) =>{
+    if (!user) {
+      throw new NotFound('Пользователь не найден');
+    }
+    res.send({ data: user });
+  })
   .catch((err) =>{
     if(err.name==='CastError') {
       return res.status(404).send({
