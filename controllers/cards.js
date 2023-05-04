@@ -44,16 +44,17 @@ const putLike = (req, res)=> {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-  .then((card)=>res.send(card))
-  .catch((err)=>{
-    if(err.name==='CastError') {
-      return res.status(404).send({
-        "message": `Карточка с ID ${req.params.cardId} не найдена`
-      })
+  .then((card)=>{
+    if(!card) {
+      res.status(404).send('Карточка с таким ID не найдена')
+    } else {
+      res.send(card)
     }
-    if(err.name==='ValidationError') {
+  })
+  .catch((err)=>{
+    if(err.name==='CastError' || err.name==='ValidationError') {
       return res.status(400).send({
-        "message": "Переданы некорректные данные при постановке лайка карточки"
+        "message": `Переданы некорректные данные при постановке лайка карточки`
       })
     }
     res.status(500).send({
@@ -68,16 +69,17 @@ const deleteLike = (req, res)=> {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-  .then((card)=>res.send(card))
-  .catch((err)=>{
-    if(err.name==='CastError') {
-      return res.status(404).send({
-        "message": `Карточка с ID ${req.params.cardId} не найдена`
-      })
+  .then((card)=>{
+    if(!card) {
+      res.status(404).send('Карточка с таким ID не найдена')
+    } else {
+      res.send(card)
     }
-    if(err.name==='ValidationError') {
+  })
+  .catch((err)=>{
+    if(err.name==='CastError' || err.name==='ValidationError') {
       return res.status(400).send({
-        "message": "Переданы некорректные данные при снятии лайка карточки"
+        "message": `Переданы некорректные данные при постановке лайка карточки`
       })
     }
     res.status(500).send({
