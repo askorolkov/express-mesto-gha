@@ -38,7 +38,12 @@ const deleteCard = (req, res) => {
         res.send(card);
       }
     })
-    .catch(() => res.status(STATUS_CODE.ERROR).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(STATUS_CODE.INCORRECT_DATA).send({ message: 'Переданы некорректные данные при удалении карточки' });
+      }
+      return res.status(STATUS_CODE.ERROR).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const putLike = (req, res) => {
