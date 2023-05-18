@@ -4,7 +4,7 @@ const {
   getCards, createCard, deleteCard, putLike, deleteLike,
 } = require('../controllers/cards');
 
-const onCardCreateValidation = require('../middlewares/validation');
+const { onCardCreateValidation } = require('../middlewares/validation');
 
 cardsRouter.get('/cards', getCards);
 

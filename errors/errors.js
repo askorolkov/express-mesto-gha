@@ -1,8 +1,0 @@
-const STATUS_CODE = {
-  CREATED: 201,
-  INCORRECT_DATA: 400,
-  NOT_FOUND: 404,
-  ERROR: 500,
-};
-
-module.exports = STATUS_CODE;

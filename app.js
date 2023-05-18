@@ -16,8 +16,6 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use(router);
-
 router.post('/signin', onUserLoginValidation, login);
 router.post('/signup', onUserCreateValidation, createUser);
 
@@ -25,6 +23,7 @@ router.use('*', (req, res) => {
   res.status(STATUS_CODE.NOT_FOUND).send({ message: 'Page not found' });
 });
 app.use(auth);
+app.use(router);
 app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
@@ -34,7 +33,7 @@ app.use((err, req, res, next) => {
     .send({
       message: statusCode === 500
         ? 'На сервере произошла ошибка'
-        : message
+        : message,
     });
   next();
 });
