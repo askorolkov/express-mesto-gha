@@ -1,5 +1,21 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const STATUS_CODE = require('../errors/errors');
+
+const SALT = 10;
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user.id }, 'secret', { expiresIn: '7d' });
+      res.send({ token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
 
 const getUsers = (req, res) => {
   User.find({})
@@ -35,14 +51,22 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send(user))
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, SALT)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => { res.status(201).send(`Пользователь ${user.email} успешно создан`); })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(STATUS_CODE.INCORRECT_DATA).send({
           message: 'Переданы некорректные данные при создании пользователя',
         });
+      }
+      if (err.code === 11000) {
+        return res.status(409).send({ message: 'Такой пользователь уже существует ' });
       }
       return res.status(STATUS_CODE.ERROR).send({
         message: 'Произошла ошибка',
@@ -100,10 +124,20 @@ const updateAvatar = (req, res) => {
     });
 };
 
+const getMyProfileInfo = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      res.send(user);
+    })
+    .catch(() => res.status(STATUS_CODE.ERROR).send({ message: 'Произошла ошибка' }));
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   updateAvatar,
+  login,
+  getMyProfileInfo,
 };
