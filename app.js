@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const router = require('./routes/index');
-const STATUS_CODE = require('./errors/errors');
+const NotFoundError = require('./errors/NotFound');
 const auth = require('./middlewares/auth');
 
 const { onUserCreateValidation, onUserLoginValidation } = require('./middlewares/validation');
@@ -19,8 +19,8 @@ app.use(bodyParser.json());
 router.post('/signin', onUserLoginValidation, login);
 router.post('/signup', onUserCreateValidation, createUser);
 
-router.use('*', (req, res) => {
-  res.status(STATUS_CODE.NOT_FOUND).send({ message: 'Page not found' });
+router.use('*', (req, res, next) => {
+  next(new NotFoundError('Page not found'));
 });
 app.use(auth);
 app.use(router);
