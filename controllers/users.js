@@ -48,21 +48,24 @@ const createUser = (req, res, next) => {
       User.create({
         name, about, avatar, email, password: hash,
       })
-        .then(() => res.status(201).send({
-          data: {
-            name, about, avatar, email,
+        .then(() => res.status(201).send(
+          {
+            data: {
+              name, about, avatar, email,
+            },
           },
-        }));
+        ))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+          }
+          if (err.code === 11000) {
+            return next(new ConflictError('Такой пользователь уже существует'));
+          }
+          return next(err);
+        });
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
-      }
-      if (err.code === 11000) {
-        next(new ConflictError('Такой пользователь уже существует'));
-      }
-      return next(err);
-    });
+    .catch(next);
 };
 
 const updateUser = (req, res, next) => {
