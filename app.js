@@ -16,8 +16,8 @@ const app = express();
 
 app.use(bodyParser.json());
 
-router.post('/signin', onUserLoginValidation, login);
-router.post('/signup', onUserCreateValidation, createUser);
+app.post('/signin', onUserLoginValidation, login);
+app.post('/signup', onUserCreateValidation, createUser);
 
 router.use('*', (req, res, next) => {
   next(new NotFoundError('Page not found'));
