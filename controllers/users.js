@@ -49,7 +49,9 @@ const createUser = (req, res, next) => {
         name, about, avatar, email, password: hash,
       })
         .then(() => res.status(201).send({
-          data: name, about, avatar, email,
+          data: {
+            name, about, avatar, email,
+          },
         }));
     })
     .catch((err) => {
