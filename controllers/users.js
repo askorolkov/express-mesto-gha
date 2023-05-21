@@ -4,6 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFound');
 const BadRequestError = require('../errors/BadRequest');
 const ConflictError = require('../errors/ConflictError');
+const AuthErr = require('../errors/AuthErr');
 
 const SALT = 10;
 
@@ -11,6 +12,9 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      // if (!user) {
+      //   throw new AuthErr('Такой пользователь не существует');
+      // }
       const token = jwt.sign({ _id: user.id }, 'secret', { expiresIn: '7d' });
       res.send({ token });
     })
