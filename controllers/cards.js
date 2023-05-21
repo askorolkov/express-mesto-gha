@@ -31,8 +31,8 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError('Нельзя удалить карточку другого пользователя ');
       }
       return Card.findByIdAndDelete(req.params.cardId)
-        .then((card) => {
-          res.send(`Карточка ${card.id} успешно удалена`);
+        .then(() => {
+          res.send({ message: 'Карточка успешно удалена' });
         });
     })
     .catch((err) => {

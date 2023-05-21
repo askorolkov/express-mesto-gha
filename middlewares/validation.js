@@ -10,6 +10,14 @@ const urlValidation = function (url) {
   throw new BadRequestError('Некорректный адрес URL');
 };
 
+const idValidation = function (id) {
+  const regexp = /^[0-9a-fA-F]{24}$/;
+  if (regexp.test(id)) {
+    return id;
+  }
+  throw new BadRequestError('Incorrect id');
+};
+
 module.exports.onUserLoginValidation = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -24,6 +32,18 @@ module.exports.onUserCreateValidation = celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().custom(urlValidation),
+  }),
+});
+
+module.exports.cardIdValidation = celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().custom(idValidation),
+  }),
+});
+
+module.exports.userIdValidation = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().required().custom(idValidation),
   }),
 });
 
