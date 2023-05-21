@@ -14,13 +14,13 @@ const login = (req, res, next) => {
       const token = jwt.sign({ _id: user.id }, 'secret', { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 const getUserById = (req, res, next) => {
@@ -34,8 +34,9 @@ const getUserById = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Некорректный ID пользователя'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
@@ -57,12 +58,12 @@ const createUser = (req, res, next) => {
         ))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+            next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+          } else if (err.code === 11000) {
+            next(new ConflictError('Такой пользователь уже существует'));
+          } else {
+            next(err);
           }
-          if (err.code === 11000) {
-            return next(new ConflictError('Такой пользователь уже существует'));
-          }
-          return next(err);
         });
     })
     .catch(next);
@@ -79,8 +80,9 @@ const updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении данных пользователя'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
@@ -99,8 +101,9 @@ const updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении данных пользователя'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 

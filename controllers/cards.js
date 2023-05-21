@@ -6,7 +6,7 @@ const ForbiddenError = require('../errors/ForbiddenError');
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 const createCard = (req, res, next) => {
@@ -16,8 +16,9 @@ const createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании карточки'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -38,8 +39,9 @@ const deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при удалении карточки'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
@@ -58,8 +60,9 @@ const putLike = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при постановке лайка карточки'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
@@ -78,8 +81,9 @@ const deleteLike = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при постановке лайка карточки'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 

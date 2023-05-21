@@ -5,14 +5,14 @@ const {
 
 const { onUpdateUserInfo, onUpdateUserAvatar, userIdValidation } = require('../middlewares/validation');
 
-usersRouter.get('/users', getUsers);
+usersRouter.get('/', getUsers);
 
-usersRouter.get('/users/me', getMyProfileInfo);
+usersRouter.get('/me', getMyProfileInfo);
 
-usersRouter.get('/users/:userId', userIdValidation, getUserById);
+usersRouter.patch('/me', onUpdateUserInfo, updateUser);
 
-usersRouter.patch('/users/me/avatar', onUpdateUserAvatar, updateAvatar);
+usersRouter.get('/:userId', userIdValidation, getUserById);
 
-usersRouter.patch('/users/me', onUpdateUserInfo, updateUser);
+usersRouter.patch('/me/avatar', onUpdateUserAvatar, updateAvatar);
 
 module.exports = usersRouter;
